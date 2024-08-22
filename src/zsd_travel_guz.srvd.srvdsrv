@@ -1,0 +1,15 @@
+@EndUserText.label: 'SD TRAVEL'
+define service ZSD_TRAVEL_GUZ {
+  expose Z_C_TRAVEL_GUZ        as TRAVEL;
+  expose Z_C_BOOKING_guz       as BOOKING;
+  expose Z_C_BOOKSUPPL_GUZ     as BOOKINGUPPLEM;
+  expose /DMO/I_Supplement     as Supplement;
+  expose /DMO/I_SupplementText as SupplementText;
+  expose /DMO/I_Customer       as Passenger;
+  expose /DMO/I_Agency         as Agency;
+  expose /DMO/I_Carrier        as Airline;
+  expose /DMO/I_Connection     as FlightClonnection;
+  expose /DMO/I_Flight         as Flight;
+  expose I_Currency            as Currency;
+  expose I_Country             as Country;
+}
