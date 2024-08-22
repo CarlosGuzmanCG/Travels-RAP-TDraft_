@@ -28,7 +28,7 @@ etag master last_changed_at
   action ( features : instance ) acceptTravel result [1] $self; //$self = Esta misma instancia
   action ( features : instance ) rejectTravel result [1] $self;
 
-  action createTravelByTemplate result [1] $self;
+  action createTravelByTemplate result [1] $self;//Action Implementation -> Create travel by template
 
   association _Booking { create; }
 
