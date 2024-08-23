@@ -36,6 +36,37 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD acceptTravel.
+
+    "Modify in local mode - BO - related updates there are not relevant for autorization objects
+    MODIFY ENTITIES OF z_i_travel_guz IN LOCAL MODE
+            ENTITY travel
+            UPDATE FIELDS ( overall_status )
+            WITH VALUE #( FOR key_row IN keys ( travel_id = key_row-travel_id
+                                                overall_status = 'A' ) ) "Accepted
+            FAILED failed
+            REPORTED reported.
+
+    READ ENTITIES OF z_i_travel_guz IN LOCAL MODE
+        ENTITY travel
+          FIELDS  ( agency_id
+                    customer_id
+                    begin_date
+                    end_date
+                    booking_fee
+                    total_price
+                    currency_code
+                    overall_status
+                    description
+                    created_at
+                    created_by
+                    last_changed_by
+                    last_changed_at )
+          WITH VALUE #( FOR key_row1 IN keys ( travel_id = key_row1-travel_id ) )
+          RESULT DATA(lt_travel).
+
+    result = VALUE #( FOR ls_travel IN lt_travel ( travel_id = ls_travel-travel_id
+                                                   %param    = ls_travel ) ).
+
   ENDMETHOD.
 
   METHOD createTravelByTemplate.
@@ -111,6 +142,35 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rejectTravel.
+      "Modify in local mode - BO - related updates there are not relevant for autorization objects
+    MODIFY ENTITIES OF z_i_travel_guz IN LOCAL MODE
+            ENTITY travel
+            UPDATE FIELDS ( overall_status )
+            WITH VALUE #( FOR key_row IN keys ( travel_id = key_row-travel_id
+                                                overall_status = 'X' ) ) "Rejected
+            FAILED failed
+            REPORTED reported.
+
+    READ ENTITIES OF z_i_travel_guz IN LOCAL MODE
+        ENTITY travel
+          FIELDS  ( agency_id
+                    customer_id
+                    begin_date
+                    end_date
+                    booking_fee
+                    total_price
+                    currency_code
+                    overall_status
+                    description
+                    created_at
+                    created_by
+                    last_changed_by
+                    last_changed_at )
+          WITH VALUE #( FOR key_row1 IN keys ( travel_id = key_row1-travel_id ) )
+          RESULT DATA(lt_travel).
+
+    result = VALUE #( FOR ls_travel IN lt_travel ( travel_id = ls_travel-travel_id
+                                                   %param    = ls_travel ) ).
   ENDMETHOD.
 
   METHOD validateCustomer.
