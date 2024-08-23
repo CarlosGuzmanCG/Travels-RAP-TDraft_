@@ -13,7 +13,7 @@ etag master last_changed_at
   // Mandatory fields that are required to create a travel
   field ( mandatory ) agency_id, overall_status, booking_fee, currency_code;
   // Dynamic field control
-  field ( features : instance ) travel_id; //Creation ID
+  field ( features : instance ) travel_id, overall_status; //Creation ID
   //  field ( numbering : managed ) travel_id;
   create;
   update;

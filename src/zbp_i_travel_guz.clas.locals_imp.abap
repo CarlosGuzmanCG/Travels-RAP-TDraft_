@@ -30,6 +30,25 @@ ENDCLASS.
 CLASS lhc_Travel IMPLEMENTATION.
 
   METHOD get_instance_features.
+
+    read ENTITIES OF z_i_travel_guz
+         ENTITY Travel
+         FIELDS ( travel_id overall_status )
+         with value #( for key_row in keys ( %key = key_row-%key ) )
+         RESULT data(lt_travel_result).
+
+    result = value #( for ls_travel in lt_travel_result (
+                        %key = ls_travel-%key
+                        %field-travel_id = if_abap_behv=>fc-f-read_only
+                        %field-overall_status = if_abap_behv=>fc-f-read_only
+                        %action-acceptTravel = cond #( when ls_travel-overall_status = 'A'
+                                                            then if_abap_behv=>fc-o-disabled
+                                                            else if_abap_behv=>fc-o-enabled )
+                        %action-rejectTravel = cond #( when ls_travel-overall_status = 'X'
+                                                            then if_abap_behv=>fc-o-disabled
+                                                            else if_abap_behv=>fc-o-enabled )
+                                                           ) ).
+
   ENDMETHOD.
 
   METHOD get_instance_authorizations.
