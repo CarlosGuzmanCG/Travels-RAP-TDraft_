@@ -1,20 +1,24 @@
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
-
-    METHODS get_instance_features FOR INSTANCE FEATURES
+ "ACTIONS
+    METHODS: get_instance_features FOR INSTANCE FEATURES
       IMPORTING keys REQUEST requested_features FOR Travel RESULT result.
+
+    METHODS: acceptTravel FOR MODIFY
+      IMPORTING keys FOR ACTION Travel~acceptTravel RESULT result.
+
+    METHODS: createTravelByTemplate FOR MODIFY
+      IMPORTING keys FOR ACTION Travel~createTravelByTemplate RESULT result.
+
+    METHODS: rejectTravel FOR MODIFY
+      IMPORTING keys FOR ACTION Travel~rejectTravel RESULT result.
+
+
+"VALIDATIONS
 
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       IMPORTING keys REQUEST requested_authorizations FOR Travel RESULT result.
 
-    METHODS acceptTravel FOR MODIFY
-      IMPORTING keys FOR ACTION Travel~acceptTravel RESULT result.
-
-    METHODS createTravelByTemplate FOR MODIFY
-      IMPORTING keys FOR ACTION Travel~createTravelByTemplate RESULT result.
-
-    METHODS rejectTravel FOR MODIFY
-      IMPORTING keys FOR ACTION Travel~rejectTravel RESULT result.
 
     METHODS validateCustomer FOR VALIDATE ON SAVE
       IMPORTING keys FOR Travel~validateCustomer.
@@ -193,6 +197,35 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD validateCustomer.
+
+    read ENTITIES OF z_i_travel_guz in local mode
+        ENTITY Travel
+        FIELDS ( customer_id )
+        with CORRESPONDING #( keys )
+        RESULT DATA(lt_travel).
+
+    data lt_customer type SORTED TABLE OF /dmo/customer with UNIQUE key customer_id.
+
+    lt_customer = CORRESPONDING #( lt_travel DISCARDING DUPLICATES MAPPING customer_id = customer_id EXCEPT * ).
+
+    delete lt_customer where customer_id is INITIAL.
+
+    select from /dmo/customer fields customer_id
+        for all ENTRIES IN @lt_customer
+            where customer_id eq @lt_customer-customer_id
+                into table @data(lt_customer_db).
+
+    loop at lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+
+        if <ls_travel>-customer_id is INITIAL
+                or not line_exists( lt_customer_db[ customer_id = <ls_travel>-customer_id ] ).
+
+            append value  #( travel_id = <ls_travel>-travel_id ) to failed-travel.
+
+        endif.
+
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD validateDates.
