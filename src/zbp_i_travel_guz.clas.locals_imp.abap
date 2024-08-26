@@ -90,6 +90,20 @@ CLASS lhc_Travel IMPLEMENTATION.
     result = VALUE #( FOR ls_travel IN lt_travel ( travel_id = ls_travel-travel_id
                                                    %param    = ls_travel ) ).
 
+    LOOP AT lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+
+      data(lv_travel_msg) = <ls_travel>-travel_id.
+
+      SHIFT lv_travel_msg LEFT DELETING LEADING '0'.
+
+      APPEND VALUE #( travel_id = <ls_travel>-travel_id
+                          %msg      = new_message( id         = 'Z_MC_TRAVEL_GUZ'
+                                                   number     = '006'
+                                                   v1         = <ls_travel>-travel_id
+                                                   severity   = if_abap_behv_message=>severity-success )
+                          %element-customer_id = if_abap_behv=>mk-on ) TO reported-travel.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD createTravelByTemplate.
@@ -193,7 +207,23 @@ CLASS lhc_Travel IMPLEMENTATION.
           RESULT DATA(lt_travel).
 
     result = VALUE #( FOR ls_travel IN lt_travel ( travel_id = ls_travel-travel_id
-                                                   %param    = ls_travel ) ).
+
+                                                     %param    = ls_travel ) ).
+
+    LOOP AT lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+
+      data(lv_travel_msg) = <ls_travel>-travel_id.
+
+      SHIFT lv_travel_msg LEFT DELETING LEADING '0'.
+
+      APPEND VALUE #( travel_id = <ls_travel>-travel_id
+                          %msg      = new_message( id         = 'Z_MC_TRAVEL_GUZ'
+                                                   number     = '007'
+                                                   v1         = <ls_travel>-travel_id
+                                                   severity   = if_abap_behv_message=>severity-success )
+                          %element-customer_id = if_abap_behv=>mk-on ) TO reported-travel.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD validateCustomer.
@@ -289,8 +319,8 @@ CLASS lhc_Travel IMPLEMENTATION.
 
       CASE ls_travel_result-overall_status.
         WHEN 'O'. "OPEN
-          "when 'X'. "Cancelled
-          "WHEN 'A'. "Accepted
+        when 'X'. "Cancelled
+        WHEN 'A'. "Accepted
 
         WHEN OTHERS.
 
