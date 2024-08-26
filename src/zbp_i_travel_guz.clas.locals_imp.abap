@@ -222,16 +222,90 @@ CLASS lhc_Travel IMPLEMENTATION.
 
             append value  #( travel_id = <ls_travel>-travel_id ) to failed-travel.
 
+            APPEND value #( travel_id = <ls_travel>-travel_id
+                            %msg      = new_message( id         = 'Z_MC_TRAVEL_GUZ'
+                                                     number     = '001'
+                                                     v1         = <ls_travel>-travel_id
+                                                     severity   = if_abap_behv_message=>severity-error )
+                            %element-customer_id = if_abap_behv=>mk-on
+                          ) to reported-travel.
+
         endif.
 
     ENDLOOP.
 
+
   ENDMETHOD.
 
   METHOD validateDates.
+
+    READ ENTITY z_i_travel_guz\\Travel FIELDS ( begin_date end_date )
+        WITH VALUE #( FOR <row_key> IN keys ( %key = <row_key>-%key ) )
+            RESULT DATA(lt_travel_result).
+
+    LOOP AT lt_travel_result INTO DATA(ls_travel_result).
+
+      IF ls_travel_result-end_date LT ls_travel_result-begin_date. "end_date before begin_date
+
+        APPEND VALUE #( %key = ls_travel_result-%key
+
+        travel_id = ls_travel_result-travel_id ) TO failed-travel.
+
+        APPEND VALUE #( %key = ls_travel_result-%key
+        %msg = new_message( id = 'Z_MC_TRAVEL_GUZ'
+        number = '003'
+        v1 = ls_travel_result-begin_date
+        v2 = ls_travel_result-end_date
+        v3 = ls_travel_result-travel_id
+        severity = if_abap_behv_message=>severity-error )
+        %element-begin_date = if_abap_behv=>mk-on
+        %element-end_date = if_abap_behv=>mk-on )
+            TO reported-travel.
+
+      ELSEIF ls_travel_result-begin_date < cl_abap_context_info=>get_system_date( ). "begin_date must be in the future
+        APPEND VALUE #( %key = ls_travel_result-%key
+
+        travel_id = ls_travel_result-travel_id ) TO failed-travel.
+
+        APPEND VALUE #( %key = ls_travel_result-%key
+        %msg = new_message( id = 'Z_MC_TRAVEL_GUZ'
+            number = '002'
+            severity = if_abap_behv_message=>severity-error )
+        %element-begin_date = if_abap_behv=>mk-on
+        %element-end_date = if_abap_behv=>mk-on ) TO reported-travel.
+      ENDIF.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD validateStatus.
+
+    READ ENTITY z_i_travel_guz\\Travel
+        FIELDS ( overall_status )
+            WITH VALUE #( FOR <row_key> IN keys ( %key = <row_key>-%key ) )
+            RESULT DATA(lt_travel_result).
+
+    LOOP AT lt_travel_result INTO DATA(ls_travel_result).
+
+      CASE ls_travel_result-overall_status.
+        WHEN 'O'. "OPEN
+          "when 'X'. "Cancelled
+          "WHEN 'A'. "Accepted
+
+        WHEN OTHERS.
+
+          APPEND VALUE #( %key = ls_travel_result-%key ) TO failed-travel.
+
+          APPEND VALUE #( %key = ls_travel_result-%key
+                          %msg = new_message( id     = 'Z_MC_TRAVEL_GUZ'
+                                              number = '004'
+                                              v1 = ls_travel_result-overall_status
+                                              severity = if_abap_behv_message=>severity-error )
+                                              %element-overall_status = if_abap_behv=>mk-on ) TO reported-travel.
+
+      ENDCASE.
+
+    ENDLOOP.
   ENDMETHOD.
 
 ENDCLASS.
