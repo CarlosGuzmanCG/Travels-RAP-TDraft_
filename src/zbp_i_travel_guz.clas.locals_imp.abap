@@ -57,9 +57,19 @@ CLASS lhc_Travel IMPLEMENTATION.
 
   METHOD get_instance_authorizations.
 
+    "data lv_authh type c LENGTH 2.
+
+    "data(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
+
+    "if lv_user eq 'CB9980000243'.
+     "   lv_authh = if_abap_behv=>auth-allowed.
+     " ELSE.
+     "   lv_authh = if_abap_behv=>auth-unauthorized.
+    "endif.
+
     data(lv_auth) = cond #( when cl_abap_context_info=>get_user_technical_name( ) eq 'CB9980000243'
-                              then if_abap_behv=>auth-allowed
-                              else if_abap_behv=>auth-unauthorized ).
+                             then if_abap_behv=>auth-allowed
+                            else if_abap_behv=>auth-unauthorized ).
 
     LOOP at keys ASSIGNING FIELD-SYMBOL(<ls_keys>).
 
