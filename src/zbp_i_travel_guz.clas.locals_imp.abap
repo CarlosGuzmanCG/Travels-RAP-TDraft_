@@ -56,6 +56,25 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_instance_authorizations.
+
+    data(lv_auth) = cond #( when cl_abap_context_info=>get_user_technical_name( ) eq 'CB9980000243'
+                              then if_abap_behv=>auth-allowed
+                              else if_abap_behv=>auth-unauthorized ).
+
+    LOOP at keys ASSIGNING FIELD-SYMBOL(<ls_keys>).
+
+        APPEND INITIAL LINE TO result ASSIGNING FIELD-SYMBOL(<ls_result>).
+
+        <ls_result> = value #(  %key = <ls_keys>-%key
+                                %op-%update = lv_auth
+                                %delete = lv_auth
+                                %action-acceptTravel = lv_auth
+                                %action-rejectTravel = lv_auth
+                                %action-createTravelByTemplate = lv_auth
+                                %assoc-_Booking = lv_auth ).
+
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD acceptTravel.

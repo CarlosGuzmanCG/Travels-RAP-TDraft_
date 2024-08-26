@@ -55,7 +55,7 @@ define behavior for z_i_booking_guz alias Booking //alias <alias_name>
 implementation in class zbp_i_booking_guz unique
 persistent table zbooking_guz
 lock dependent by _Travel
-authorization dependent by _Travel
+//authorization dependent by _Travel
 //  authorization dependent
 etag master last_change_at
 {
