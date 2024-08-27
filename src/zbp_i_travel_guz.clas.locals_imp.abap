@@ -393,10 +393,9 @@ CLASS lsc_Z_I_TRAVEL_GUZ IMPLEMENTATION.
 
     DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
 
-
     IF NOT create-travel IS INITIAL.
 
-    lt_travel_guz = CORRESPONDING #( create-travel ).
+      lt_travel_guz = CORRESPONDING #( create-travel ).
 
       LOOP AT lt_travel_guz ASSIGNING FIELD-SYMBOL(<ls_travel_guz>).
 
@@ -471,18 +470,18 @@ CLASS lsc_Z_I_TRAVEL_GUZ IMPLEMENTATION.
 
       lt_travel_guz = CORRESPONDING #( delete-travel ).
 
-      LOOP AT lt_travel_guz ASSIGNING FIELD-SYMBOL(<ls_travel_log_del>).
+      LOOP AT lt_travel_guz ASSIGNING FIELD-SYMBOL(<ls_travel_guz_del>).
 
-        GET TIME STAMP FIELD <ls_travel_log_del>-created_at.
+        GET TIME STAMP FIELD <ls_travel_guz_del>-created_at.
 
-        <ls_travel_log_del>-changing_operation = lsc_z_i_travel_guz=>delete.
-        <ls_travel_log_del>-user_mod = lv_user.
+        <ls_travel_guz_del>-changing_operation = lsc_z_i_travel_guz=>delete.
+        <ls_travel_guz_del>-user_mod = lv_user.
 
         TRY.
-            <ls_travel_log_del>-change_id = cl_system_uuid=>create_uuid_x16_static( ).
+            <ls_travel_guz_del>-change_id = cl_system_uuid=>create_uuid_x16_static( ).
           CATCH cx_uuid_error.
-            APPEND <ls_travel_log_del> TO lt_travel_guz_update.
         ENDTRY.
+        APPEND <ls_travel_guz_del> TO lt_travel_guz_update.
 
       ENDLOOP.
 
