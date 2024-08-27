@@ -15,6 +15,14 @@ ENDCLASS.
 CLASS lhc_Booking IMPLEMENTATION.
 
   METHOD calculateTotalFlighPrice.
+
+    if not keys is initial.
+
+    zcl_aux_travel_det_cg=>calculate_price( it_travel_id = value #( for groups <booking> of booking_key in keys
+                                            group by booking_key-travel_id without members ( <booking> ) ) ).
+
+    endif.
+
   ENDMETHOD.
 
   METHOD validateCustomer.
