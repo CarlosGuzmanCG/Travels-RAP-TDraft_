@@ -19,7 +19,7 @@ use etag //capa OData
 define behavior for Z_C_BOOKING_GUZ alias BookingProcessor
 {
   use update;
-//  use delete;
+  use delete;
 
   use association _Travel;
   use association _BookingSupplement { create; }
@@ -28,7 +28,7 @@ define behavior for Z_C_BOOKING_GUZ alias BookingProcessor
 define behavior for Z_C_BOOKSUPPL_GUZ alias SupplementProcessor
 {
   use update;
-//  use delete;
+  use delete;
 
   use association _Travel;
   use association _Booking;

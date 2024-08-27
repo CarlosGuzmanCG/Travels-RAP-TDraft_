@@ -7,6 +7,9 @@ CLASS lhc_Booking DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS validateCustomer FOR VALIDATE ON SAVE
       IMPORTING keys FOR Booking~validateCustomer.
 
+      METHODS get_features for features
+        IMPORTING keys REQUEST requested_features for booking result result.
+
 ENDCLASS.
 
 CLASS lhc_Booking IMPLEMENTATION.
@@ -41,6 +44,20 @@ CLASS lhc_Booking IMPLEMENTATION.
       ENDCASE.
 
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD get_features.
+
+    read ENTITIES OF z_i_travel_guz
+        entity booking
+        fields ( booking_id booking_date customer_id booking_status )
+            with value #( for keyval in keys ( %key = keyval-%key ) )
+        RESULT data(lt_booking_result).
+
+    result = value #( for ls_travel in lt_booking_result
+                        ( %key = ls_travel-%key
+                          %assoc-_BookingSupplement = if_abap_behv=>fc-o-enabled ) ).
+
   ENDMETHOD.
 
 ENDCLASS.

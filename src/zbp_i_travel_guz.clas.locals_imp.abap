@@ -45,6 +45,7 @@ CLASS lhc_Travel IMPLEMENTATION.
                         %key = ls_travel-%key
                         %field-travel_id = if_abap_behv=>fc-f-read_only
                         %field-overall_status = if_abap_behv=>fc-f-read_only
+                        %assoc-_Booking = if_abap_behv=>fc-o-enabled  "navigation 1 -> 2 -> 3 -> ..
                         %action-acceptTravel = COND #( WHEN ls_travel-overall_status = 'A'
                                                             THEN if_abap_behv=>fc-o-disabled
                                                             ELSE if_abap_behv=>fc-o-enabled )

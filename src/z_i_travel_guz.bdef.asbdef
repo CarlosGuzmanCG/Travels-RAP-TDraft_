@@ -31,7 +31,7 @@ etag master last_changed_at
 
   action createTravelByTemplate result [1] $self;//Action Implementation -> Create travel by template
 
-  association _Booking { create; }
+  association _Booking { create ( features :  instance ); }
 
   mapping for ztravel_guz
     {
@@ -63,6 +63,7 @@ etag master last_change_at
 {
   field ( readonly ) travel_id;
   field ( mandatory : create ) booking_id, carrier_id, connection_id, flight_date, booking_status;
+
   update;
   delete;
 
@@ -74,7 +75,7 @@ etag master last_change_at
 
   //  field ( readonly ) travel_id;
   association _Travel { }
-  association _BookingSupplement { create; }
+  association _BookingSupplement { create ( features :  instance ); }
 
   mapping for zbooking_guz
     {
