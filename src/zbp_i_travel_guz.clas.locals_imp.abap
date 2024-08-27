@@ -1,6 +1,6 @@
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
- "ACTIONS
+    "ACTIONS
     METHODS: get_instance_features FOR INSTANCE FEATURES
       IMPORTING keys REQUEST requested_features FOR Travel RESULT result.
 
@@ -14,7 +14,7 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
       IMPORTING keys FOR ACTION Travel~rejectTravel RESULT result.
 
 
-"VALIDATIONS
+    "VALIDATIONS
 
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       IMPORTING keys REQUEST requested_authorizations FOR Travel RESULT result.
@@ -35,22 +35,22 @@ CLASS lhc_Travel IMPLEMENTATION.
 
   METHOD get_instance_features.
 
-    read ENTITIES OF z_i_travel_guz
+    READ ENTITIES OF z_i_travel_guz
          ENTITY Travel
          FIELDS ( travel_id overall_status )
-         with value #( for key_row in keys ( %key = key_row-%key ) )
-         RESULT data(lt_travel_result).
+         WITH VALUE #( FOR key_row IN keys ( %key = key_row-%key ) )
+         RESULT DATA(lt_travel_result).
 
-    result = value #( for ls_travel in lt_travel_result (
+    result = VALUE #( FOR ls_travel IN lt_travel_result (
                         %key = ls_travel-%key
                         %field-travel_id = if_abap_behv=>fc-f-read_only
                         %field-overall_status = if_abap_behv=>fc-f-read_only
-                        %action-acceptTravel = cond #( when ls_travel-overall_status = 'A'
-                                                            then if_abap_behv=>fc-o-disabled
-                                                            else if_abap_behv=>fc-o-enabled )
-                        %action-rejectTravel = cond #( when ls_travel-overall_status = 'X'
-                                                            then if_abap_behv=>fc-o-disabled
-                                                            else if_abap_behv=>fc-o-enabled )
+                        %action-acceptTravel = COND #( WHEN ls_travel-overall_status = 'A'
+                                                            THEN if_abap_behv=>fc-o-disabled
+                                                            ELSE if_abap_behv=>fc-o-enabled )
+                        %action-rejectTravel = COND #( WHEN ls_travel-overall_status = 'X'
+                                                            THEN if_abap_behv=>fc-o-disabled
+                                                            ELSE if_abap_behv=>fc-o-enabled )
                                                            ) ).
 
   ENDMETHOD.
@@ -62,26 +62,26 @@ CLASS lhc_Travel IMPLEMENTATION.
     "data(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
 
     "if lv_user eq 'CB9980000243'.
-     "   lv_authh = if_abap_behv=>auth-allowed.
-     " ELSE.
-     "   lv_authh = if_abap_behv=>auth-unauthorized.
+    "   lv_authh = if_abap_behv=>auth-allowed.
+    " ELSE.
+    "   lv_authh = if_abap_behv=>auth-unauthorized.
     "endif.
 
-    data(lv_auth) = cond #( when cl_abap_context_info=>get_user_technical_name( ) eq 'CB9980000243'
-                             then if_abap_behv=>auth-allowed
-                            else if_abap_behv=>auth-unauthorized ).
+    DATA(lv_auth) = COND #( WHEN cl_abap_context_info=>get_user_technical_name( ) EQ 'CB9980000243'
+                             THEN if_abap_behv=>auth-allowed
+                            ELSE if_abap_behv=>auth-unauthorized ).
 
-    LOOP at keys ASSIGNING FIELD-SYMBOL(<ls_keys>).
+    LOOP AT keys ASSIGNING FIELD-SYMBOL(<ls_keys>).
 
-        APPEND INITIAL LINE TO result ASSIGNING FIELD-SYMBOL(<ls_result>).
+      APPEND INITIAL LINE TO result ASSIGNING FIELD-SYMBOL(<ls_result>).
 
-        <ls_result> = value #(  %key = <ls_keys>-%key
-                                %op-%update = lv_auth
-                                %delete = lv_auth
-                                %action-acceptTravel = lv_auth
-                                %action-rejectTravel = lv_auth
-                                %action-createTravelByTemplate = lv_auth
-                                %assoc-_Booking = lv_auth ).
+      <ls_result> = VALUE #(  %key = <ls_keys>-%key
+                              %op-%update = lv_auth
+                              %delete = lv_auth
+                              %action-acceptTravel = lv_auth
+                              %action-rejectTravel = lv_auth
+                              %action-createTravelByTemplate = lv_auth
+                              %assoc-_Booking = lv_auth ).
 
     ENDLOOP.
 
@@ -121,7 +121,7 @@ CLASS lhc_Travel IMPLEMENTATION.
 
     LOOP AT lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
 
-      data(lv_travel_msg) = <ls_travel>-travel_id.
+      DATA(lv_travel_msg) = <ls_travel>-travel_id.
 
       SHIFT lv_travel_msg LEFT DELETING LEADING '0'.
 
@@ -208,7 +208,7 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rejectTravel.
-      "Modify in local mode - BO - related updates there are not relevant for autorization objects
+    "Modify in local mode - BO - related updates there are not relevant for autorization objects
     MODIFY ENTITIES OF z_i_travel_guz IN LOCAL MODE
             ENTITY travel
             UPDATE FIELDS ( overall_status )
@@ -241,7 +241,7 @@ CLASS lhc_Travel IMPLEMENTATION.
 
     LOOP AT lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
 
-      data(lv_travel_msg) = <ls_travel>-travel_id.
+      DATA(lv_travel_msg) = <ls_travel>-travel_id.
 
       SHIFT lv_travel_msg LEFT DELETING LEADING '0'.
 
@@ -257,39 +257,39 @@ CLASS lhc_Travel IMPLEMENTATION.
 
   METHOD validateCustomer.
 
-    read ENTITIES OF z_i_travel_guz in local mode
+    READ ENTITIES OF z_i_travel_guz IN LOCAL MODE
         ENTITY Travel
         FIELDS ( customer_id )
-        with CORRESPONDING #( keys )
+        WITH CORRESPONDING #( keys )
         RESULT DATA(lt_travel).
 
-    data lt_customer type SORTED TABLE OF /dmo/customer with UNIQUE key customer_id.
+    DATA lt_customer TYPE SORTED TABLE OF /dmo/customer WITH UNIQUE KEY customer_id.
 
     lt_customer = CORRESPONDING #( lt_travel DISCARDING DUPLICATES MAPPING customer_id = customer_id EXCEPT * ).
 
-    delete lt_customer where customer_id is INITIAL.
+    DELETE lt_customer WHERE customer_id IS INITIAL.
 
-    select from /dmo/customer fields customer_id
-        for all ENTRIES IN @lt_customer
-            where customer_id eq @lt_customer-customer_id
-                into table @data(lt_customer_db).
+    SELECT FROM /dmo/customer FIELDS customer_id
+        FOR ALL ENTRIES IN @lt_customer
+            WHERE customer_id EQ @lt_customer-customer_id
+                INTO TABLE @DATA(lt_customer_db).
 
-    loop at lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+    LOOP AT lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
 
-        if <ls_travel>-customer_id is INITIAL
-                or not line_exists( lt_customer_db[ customer_id = <ls_travel>-customer_id ] ).
+      IF <ls_travel>-customer_id IS INITIAL
+              OR NOT line_exists( lt_customer_db[ customer_id = <ls_travel>-customer_id ] ).
 
-            append value  #( travel_id = <ls_travel>-travel_id ) to failed-travel.
+        APPEND VALUE  #( travel_id = <ls_travel>-travel_id ) TO failed-travel.
 
-            APPEND value #( travel_id = <ls_travel>-travel_id
-                            %msg      = new_message( id         = 'Z_MC_TRAVEL_GUZ'
-                                                     number     = '001'
-                                                     v1         = <ls_travel>-travel_id
-                                                     severity   = if_abap_behv_message=>severity-error )
-                            %element-customer_id = if_abap_behv=>mk-on
-                          ) to reported-travel.
+        APPEND VALUE #( travel_id = <ls_travel>-travel_id
+                        %msg      = new_message( id         = 'Z_MC_TRAVEL_GUZ'
+                                                 number     = '001'
+                                                 v1         = <ls_travel>-travel_id
+                                                 severity   = if_abap_behv_message=>severity-error )
+                        %element-customer_id = if_abap_behv=>mk-on
+                      ) TO reported-travel.
 
-        endif.
+      ENDIF.
 
     ENDLOOP.
 
@@ -348,7 +348,7 @@ CLASS lhc_Travel IMPLEMENTATION.
 
       CASE ls_travel_result-overall_status.
         WHEN 'O'. "OPEN
-        when 'X'. "Cancelled
+        WHEN 'X'. "Cancelled
         WHEN 'A'. "Accepted
 
         WHEN OTHERS.
@@ -370,6 +370,12 @@ CLASS lhc_Travel IMPLEMENTATION.
 ENDCLASS.
 
 CLASS lsc_Z_I_TRAVEL_GUZ DEFINITION INHERITING FROM cl_abap_behavior_saver.
+
+  PUBLIC SECTION.
+    CONSTANTS: create TYPE string VALUE 'CREATE',
+               update TYPE string VALUE 'UPDATE',
+               delete TYPE string VALUE 'DELETE'.
+
   PROTECTED SECTION.
 
     METHODS save_modified REDEFINITION.
@@ -381,6 +387,113 @@ ENDCLASS.
 CLASS lsc_Z_I_TRAVEL_GUZ IMPLEMENTATION.
 
   METHOD save_modified.
+
+    DATA: lt_travel_guz        TYPE STANDARD TABLE OF zcg_guz,
+          lt_travel_guz_UPDATE TYPE STANDARD TABLE OF zcg_guz.
+
+    DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
+
+
+    IF NOT create-travel IS INITIAL.
+
+    lt_travel_guz = CORRESPONDING #( create-travel ).
+
+      LOOP AT lt_travel_guz ASSIGNING FIELD-SYMBOL(<ls_travel_guz>).
+
+        GET TIME STAMP FIELD <ls_travel_guz>-created_at.
+
+        <ls_travel_guz>-changing_operation = lsc_z_i_travel_guz=>create.
+
+        READ TABLE create-travel WITH TABLE KEY entity COMPONENTS travel_id = <ls_travel_guz>-travel_id
+                INTO DATA(ls_travel).
+
+        IF sy-subrc EQ 0.
+
+          IF ls_travel-%control-booking_fee EQ cl_abap_behv=>flag_changed.
+
+            <ls_travel_guz>-changed_field_name = 'booking_fee'.
+            <ls_travel_guz>-changed_value      = ls_travel-booking_fee.
+            <ls_travel_guz>-user_mod           = lv_user.
+
+            TRY.
+                <ls_travel_guz>-change_id          = cl_system_uuid=>create_uuid_x16_static( ).
+              CATCH cx_uuid_error.
+
+            ENDTRY.
+
+            APPEND <ls_travel_guz> TO lt_travel_guz_update.
+
+
+          ENDIF.
+
+        ENDIF.
+
+      ENDLOOP.
+
+    ENDIF.
+
+
+    IF NOT update-travel IS INITIAL.
+
+      lt_travel_guz = CORRESPONDING #( update-travel ).
+
+      LOOP AT update-travel INTO DATA(ls_update_travel).
+
+        ASSIGN lt_travel_guz[ travel_id = ls_update_travel-travel_id ] TO FIELD-SYMBOL(<ls_travel_guz_bd>).
+
+        GET TIME STAMP FIELD <ls_travel_guz_bd>-created_at.
+
+        <ls_travel_guz_bd>-changing_operation = lsc_z_i_travel_guz=>update.
+
+        IF ls_update_travel-%control-customer_id EQ cl_abap_behv=>flag_changed.
+
+          <ls_travel_guz_bd>-changed_field_name = 'customer_id'.
+          <ls_travel_guz_bd>-changed_value = ls_update_travel-customer_id.
+
+          <ls_travel_guz_bd>-user_mod = lv_user.
+
+          TRY.
+              <ls_travel_guz_bd>-change_id = cl_system_uuid=>create_uuid_x16_static( ).
+            CATCH cx_uuid_error.
+
+          ENDTRY.
+
+          APPEND <ls_travel_guz_bd> TO lt_travel_guz_update.
+
+        ENDIF.
+
+      ENDLOOP.
+
+    ENDIF.
+
+
+    IF NOT delete-travel IS INITIAL.
+
+      lt_travel_guz = CORRESPONDING #( delete-travel ).
+
+      LOOP AT lt_travel_guz ASSIGNING FIELD-SYMBOL(<ls_travel_log_del>).
+
+        GET TIME STAMP FIELD <ls_travel_log_del>-created_at.
+
+        <ls_travel_log_del>-changing_operation = lsc_z_i_travel_guz=>delete.
+        <ls_travel_log_del>-user_mod = lv_user.
+
+        TRY.
+            <ls_travel_log_del>-change_id = cl_system_uuid=>create_uuid_x16_static( ).
+          CATCH cx_uuid_error.
+            APPEND <ls_travel_log_del> TO lt_travel_guz_update.
+        ENDTRY.
+
+      ENDLOOP.
+
+    ENDIF.
+
+    IF NOT lt_travel_guz_update IS INITIAL.
+
+      INSERT zcg_guz FROM TABLE @lt_travel_guz_update.
+
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD cleanup_finalize.

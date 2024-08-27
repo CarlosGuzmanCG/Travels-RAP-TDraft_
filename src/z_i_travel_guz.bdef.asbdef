@@ -4,6 +4,7 @@ managed; //implementation in class zbp_i_travel_guz unique;
 define behavior for z_i_travel_guz alias Travel //Tabla CDS
 implementation in class zbp_i_travel_guz unique
 persistent table ztravel_guz //tabla de persistencia
+with additional save
 lock master // Bloqueo
 authorization master ( instance )
 etag master last_changed_at
