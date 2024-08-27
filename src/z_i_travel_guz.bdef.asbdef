@@ -34,20 +34,20 @@ etag master last_changed_at
 
   mapping for ztravel_guz
     {
-        travel_id = travel_id;
-        agency_id = agency_id;
-        customer_id = customer_id;
-        begin_date = begin_date;
-        end_date = end_date;
-        booking_fee = booking_fee;
-        total_price = total_price;
-        currency_code = currency_code;
-        description = description;
-        overall_status = overall_status;
-        created_by = created_by;
-        created_at = created_at;
-        last_changed_by = last_changed_by;
-        last_changed_at = last_changed_at;
+      travel_id       = travel_id;
+      agency_id       = agency_id;
+      customer_id     = customer_id;
+      begin_date      = begin_date;
+      end_date        = end_date;
+      booking_fee     = booking_fee;
+      total_price     = total_price;
+      currency_code   = currency_code;
+      description     = description;
+      overall_status  = overall_status;
+      created_by      = created_by;
+      created_at      = created_at;
+      last_changed_by = last_changed_by;
+      last_changed_at = last_changed_at;
     }
 }
 
@@ -56,6 +56,7 @@ implementation in class zbp_i_booking_guz unique
 persistent table zbooking_guz
 lock dependent by _Travel
 //authorization dependent by _Travel
+authorization dependent by _Travel
 //  authorization dependent
 etag master last_change_at
 {
@@ -71,7 +72,7 @@ etag master last_change_at
   determination calculateTotalFlighPrice on modify { field flight_price, currency_code; }
 
   //  field ( readonly ) travel_id;
-  association _Travel;
+  association _Travel { }
   association _BookingSupplement { create; }
 
   mapping for zbooking_guz
@@ -103,12 +104,11 @@ etag master last_changed_at
   field ( mandatory ) supplement_id, price;
   update;
   delete;
-  association _Travel;
+  association _Travel { }
   association _Booking;
 
   //determinations
   determination calculateTotalSupplPrice on modify { field price, currency; }
 
-  mapping
-       for zcg_guz corresponding;
-    }
+  mapping for zcg_guz corresponding;
+}
