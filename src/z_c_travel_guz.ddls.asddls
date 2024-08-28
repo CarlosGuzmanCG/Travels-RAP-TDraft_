@@ -23,6 +23,7 @@ define root view entity Z_C_TRAVEL_GUZ
       overall_status     as TravelStatus,
       last_changed_at    as LastChangedAt,
       @Semantics.amount.currencyCode: 'CurrencyCode'
+      @ObjectModel.virtualElementCalculatedBy: 'ABAP:ZCL_VIRT_ELEM_GUZ'
 virtual DiscountPrice : /dmo/total_price,
       /* Associations */
       _Agency,
