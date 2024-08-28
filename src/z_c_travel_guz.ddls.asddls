@@ -1,5 +1,5 @@
 @EndUserText.label: 'Consumption - Travel'
-@AccessControl.authorizationCheck: #NOT_REQUIRED
+@AccessControl.authorizationCheck: #CHECK
 @Metadata.allowExtensions: true
 define root view entity Z_C_TRAVEL_GUZ
   as projection on z_i_travel_guz
@@ -22,6 +22,8 @@ define root view entity Z_C_TRAVEL_GUZ
       description        as Description,
       overall_status     as TravelStatus,
       last_changed_at    as LastChangedAt,
+      @Semantics.amount.currencyCode: 'CurrencyCode'
+virtual DiscountPrice : /dmo/total_price,
       /* Associations */
       _Agency,
       _Booking : redirected to composition child Z_C_BOOKING_guz,
