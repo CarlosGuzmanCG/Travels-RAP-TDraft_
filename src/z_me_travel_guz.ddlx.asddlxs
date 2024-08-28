@@ -78,5 +78,11 @@ Price' } ] }
   TravelStatus;
   @UI.hidden: true
   LastChangedAt;
+  
+  
+  @UI: {
+  lineItem: [ { position: 60, importance: #HIGH } ] }
+  @EndUserText.label: 'Discount 10%'
+  DiscountPrice;
 
 }
