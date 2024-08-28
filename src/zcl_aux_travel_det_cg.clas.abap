@@ -12,9 +12,9 @@ CLASS zcl_aux_travel_det_cg DEFINITION
     TYPES: tt_travel_id TYPE TABLE OF /dmo/travel_id.
 
     CLASS-METHODS calculate_price IMPORTING it_travel_id
-                                              TYPE tt_travel_id
-                                  EXPORTING et_travel_reported
-                                              TYPE tt_travel_reported.
+                                              TYPE tt_travel_id.
+                                  "EXPORTING et_travel_reported
+                                              "TYPE tt_travel_reported.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
