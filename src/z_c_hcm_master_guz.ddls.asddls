@@ -1,5 +1,6 @@
 @EndUserText.label: 'HCM - Master'
 @Metadata.ignorePropagatedAnnotations: true
+@Metadata.allowExtensions: true
 define root view entity z_c_hcm_master_guz
   as projection on z_i_hcm_master_guz
 {
@@ -16,8 +17,10 @@ define root view entity z_c_hcm_master_guz
       MNumber      as ManagerNumber,
       MName        as ManagerName,
       MDepartment  as ManagerDepartment,
+      @Semantics.user.createdBy: true
       CreaDateTime as CreatedOn,
       CreaUname    as CreatedBy,
+      @Semantics.user.lastChangedBy: true
       LchgDateTime as ChangedOn,
       LchgUname    as ChangedBy
 }
