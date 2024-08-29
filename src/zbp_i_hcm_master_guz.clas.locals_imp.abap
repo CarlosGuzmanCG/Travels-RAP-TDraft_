@@ -42,7 +42,29 @@ CLASS lhc_HCMMaster IMPLEMENTATION.
 
   METHOD create.
 
+    GET TIME STAMP FIELD DATA(lv_time_stamp). "
+    DATA(lv_uname) = cl_abap_context_info=>get_user_technical_name( ).
 
+    SELECT MAX( e_number ) FROM zhcm_master_guz INTO @DATA(lv_max_employee_number).
+
+    LOOP AT entities INTO DATA(ls_entities).
+
+      ls_entities-%data-CreaDateTime = lv_time_stamp.
+      ls_entities-%data-CreaUname = lv_uname.
+      ls_entities-%data-ENumber = lv_max_employee_number + 1.
+
+      INSERT VALUE #( flag = lcl_buffer=>created
+                      data = CORRESPONDING #( ls_entities-%data ) )
+        INTO TABLE lcl_buffer=>mt_buffer_master_guz.
+
+      "mapped-hcmmaster
+      IF NOT ls_entities-%cid IS INITIAL.
+         INSERT VALUE #( %cid = ls_entities-%cid
+                         ENumber = ls_entities-ENumber )
+           INTO TABLE mapped-hcmmaster.
+      ENDIF.
+
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -81,6 +103,19 @@ CLASS lsc_Z_I_HCM_MASTER_GUZ IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD save.
+
+  DATA:
+   lt_data_created type standard table of zhcm_master_guz.
+
+   lt_data_created = VALUE #( FOR <row> IN lcl_buffer=>mt_buffer_master_guz
+                              WHERE ( flag = lcl_buffer=>created ) ( <row>-data ) ).
+
+   IF NOT lt_data_created IS INITIAL.
+        INSERT zhcm_master_guz FROM TABLE @lt_data_created.
+   ENDIF.
+
+   CLEAR lcl_buffer=>mt_buffer_master_guz.
+
   ENDMETHOD.
 
   METHOD cleanup.
