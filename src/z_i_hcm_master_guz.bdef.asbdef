@@ -1,7 +1,7 @@
 unmanaged implementation in class zbp_i_hcm_master_guz unique;
 //strict ( 2 ); //Uncomment this line in order to enable strict mode 2. The strict mode has two variants (strict(1), strict(2)) and is prerequisite to be future proof regarding syntax and to be able to release your BO.
 
-define behavior for z_i_hcm_master_guz //alias <alias_name>
+define behavior for z_i_hcm_master_guz alias HCMMaster
 //late numbering
 //lock master
 //authorization master ( instance )
