@@ -26,8 +26,8 @@ class lsc_supplement DEFINITION INHERITING FROM cl_abap_behavior_saver.
     public section.
 
         CONSTANTS: create type string value 'C',
-                   update type string value 'C',
-                   delete type string value 'C'.
+                   update type string value 'U',
+                   delete type string value 'D'.
 
     PROTECTED SECTION.
 
