@@ -7,14 +7,15 @@
                               value : 'EmployeeName' } } }
 annotate view z_c_hcm_master_guz with
 {
-  @UI.facet: [ { id: 'Employees',
-                  purpose: #STANDARD,
-                  type: #IDENTIFICATION_REFERENCE,
-                  label: 'Employee',
-                  position: 10}]
+  @UI.facet: [{ id: 'Employees',
+  purpose: #STANDARD,
+  type: #IDENTIFICATION_REFERENCE,
+  label: 'Employee',
+  position: 10 }]
   @Search.defaultSearchElement: true
+
   @UI: { lineItem: [{ position: 10, label: 'Employee Number', importance: #HIGH }],
-         identification: [{ position: 10, label: 'Employee Number'}]}
+         identification: [{ position: 10, label: 'Employee Number' }] }
   EmployeeNumber;
 
   @UI: { lineItem: [{ position: 20, label: 'Employee Name', importance: #HIGH  }],
@@ -60,16 +61,15 @@ annotate view z_c_hcm_master_guz with
   identification: [{ position: 100, label: 'Manager Department'}]}
   ManagerDepartment;
 
-  @UI.hidden: true 
+  @UI.hidden: true
   CreatedOn;
 
   @UI.hidden: true
   CreatedBy;
 
   @UI.hidden: true
-  ChangedOn;
+  ChangeOn;
 
   @UI.hidden: true
   ChangedBy;
-
 }
