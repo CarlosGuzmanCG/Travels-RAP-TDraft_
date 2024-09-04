@@ -1,26 +1,26 @@
-@EndUserText.label: 'Employee'
-@Metadata.ignorePropagatedAnnotations: true
+@EndUserText.label: 'Employees'
+@AccessControl.authorizationCheck: #CHECK
 @Metadata.allowExtensions: true
 define root view entity Z_C_EMPLOYEE_GUZ
-  as projection on Z_I_EMPLOYEE_GUZ
+  as projection on Z_I_EMPLOYYE_GUZ
 {
-      //@ObjectModel.text.element: [ 'EmployeeName' ]
-  key ENumber      as EmployeeNumber,
-      EName        as EmployeeName,
-      EDepartament as EmployeeDepartment,
-      Status       as EmployeeStatus,
-      JobTitle     as JobTitle,
-      StartDate    as StartDate,
-      EndDate      as EndDate,
-      Email        as Email,
-      //@ObjectModel.text.element: [ 'ManagerName' ]
-      MNumber      as ManagerNumber,
-      MName        as ManagerName,
-      MDepartment  as ManagerDepartment,
-      CreaDateTime as CreatedOn,
+      // @ObjectModel.text.element: ['EmployeeName']
+  key e_number       as EmployeeNumber,
+      e_name         as EmployeeName,
+      e_department   as EmployeeDepartment,
+      status         as EmployeeStatus,
+      job_title      as JobTitle,
+      start_date     as StartDate,
+      end_date       as EndDate,
+      email          as Email,
+      // @ObjectModel.text.element: ['ManagerName']
+      m_number       as ManagerNumber,
+      m_name         as ManagerName,
+      m_department   as ManagerDepartment,
       @Semantics.user.createdBy: true
-      CreaUname    as CreatedBy,
-      LchgDateTime as ChangeOn,
+      crea_uname     as CreatedBy,
+      crea_date_time as CreatedOn,
       @Semantics.user.lastChangedBy: true
-      LchgUname    as ChangedBy
+      lchg_uname     as ChagedBy,
+      lchg_date_time as ChangedOn
 }
